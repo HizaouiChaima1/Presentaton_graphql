@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GraphQL — Présentation</title>
+<style>
+:root{--bg:#090e1c;--panel:#131d35;--text:#f5f7ff;--muted:#bac4dc;--pink:#ef70b8;--violet:#9b8cff;--line:rgba(255,255,255,.14)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;font-family:Inter,"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+body{overflow:hidden;background:radial-gradient(circle at 80% 12%,#38224d 0,transparent 34%),radial-gradient(circle at 10% 88%,#132f50 0,transparent 36%),var(--bg)}
+.deck{height:100%;display:flex;align-items:center;justify-content:center;padding:28px 4vw 78px}
+.slide{display:none;width:min(1180px,100%);height:min(760px,100%);padding:clamp(24px,4.3vw,58px);border:1px solid var(--line);border-radius:25px;background:linear-gradient(145deg,rgba(23,33,59,.97),rgba(11,17,34,.97));box-shadow:0 25px 80px #0007;overflow:auto;position:relative}
+.slide.active{display:block;animation:enter .3s ease}@keyframes enter{from{opacity:.35;transform:translateY(9px)}to{opacity:1;transform:none}}
+.kicker{color:var(--pink);font-size:.76rem;font-weight:800;letter-spacing:.17em;text-transform:uppercase;margin-bottom:16px}
+h1{font-size:clamp(2.8rem,7vw,6rem);line-height:1.02;letter-spacing:-.055em;margin:0 0 20px}
+h2{font-size:clamp(1.9rem,4.2vw,3.3rem);line-height:1.08;letter-spacing:-.04em;margin:0 0 24px}
+h3{font-size:1.12rem;margin:0 0 10px;color:#fff}
+p,li{color:var(--muted);font-size:clamp(.98rem,1.35vw,1.12rem);line-height:1.62}
+p{margin:10px 0}ul,ol{padding-left:23px;margin:10px 0}li{margin:6px 0}
+.lead{font-size:clamp(1.12rem,1.9vw,1.45rem);max-width:850px}
+.gradient{background:linear-gradient(90deg,#ff9bce,#a99aff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:20px}.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{border:1px solid var(--line);background:#ffffff09;border-radius:17px;padding:18px}.card p{font-size:.98rem;margin:5px 0}
+.pill{display:inline-block;padding:5px 10px;border-radius:999px;background:#ef70b822;color:#ffadd6;font-size:.82rem;font-weight:750}
+.code{white-space:pre;overflow:auto;background:#070c17;border:1px solid #2a3858;border-radius:13px;padding:15px;color:#dce6ff;font: .9rem/1.55 Consolas,monospace;margin:10px 0}
+.flow{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:25px 0}.node{background:#202d4d;border:1px solid #536487;border-radius:13px;padding:14px 16px;text-align:center;min-width:115px;font-weight:750}.arrow{color:var(--pink);font-size:1.35rem}
+table{border-collapse:collapse;width:100%;font-size:.96rem;margin-top:14px}td,th{border-bottom:1px solid var(--line);padding:12px 10px;text-align:left}th{color:#ffadd6}td{color:var(--muted)}
+.small{font-size:.88rem;color:#9eabc9}.accent-line{height:3px;width:85px;background:linear-gradient(90deg,var(--pink),var(--violet));border-radius:5px;margin:22px 0}
+.footer{position:fixed;bottom:0;left:0;right:0;height:68px;display:flex;justify-content:center;align-items:center;gap:13px;background:#080d1bdc;backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+button{background:#202b49;color:white;border:1px solid var(--line);border-radius:11px;padding:10px 15px;font-weight:700;cursor:pointer}button:hover{background:#35456d}button:disabled{opacity:.35;cursor:not-allowed}
+#counter{color:var(--muted);min-width:68px;text-align:center;font-variant-numeric:tabular-nums}.progress{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--pink),var(--violet));width:5%;transition:width .25s}
+@media(max-width:720px){.deck{padding:12px 10px 75px}.slide{padding:24px 19px;border-radius:17px}.grid,.three{grid-template-columns:1fr}.node{min-width:90px;padding:10px;font-size:.88rem}.flow{gap:5px}table{font-size:.82rem}td,th{padding:8px 5px}}
+@media print{html,body{height:auto;overflow:visible;background:white;color:#111}.deck{display:block;height:auto;padding:0}.slide{display:block!important;width:100%;height:100vh;page-break-after:always;border:0;border-radius:0;box-shadow:none;background:white;color:#111}.slide p,.slide li,.slide td{color:#333}.footer,.progress{display:none}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<main class="deck">
+<section class="slide active">
+ <div style="height:100%;display:flex;flex-direction:column;justify-content:center;align-items:flex-start">
+  <div class="kicker">Développement Web avancé</div>
+  <div class="pill">Présentation académique</div>
+  <h1 style="font-size:clamp(3.5rem,10vw,7.5rem);margin-top:22px"><span class="gradient">GraphQL</span></h1>
+  <p class="lead">Une nouvelle manière de concevoir et d’interroger les API : précise, flexible et adaptée aux applications modernes.</p>
+  <div class="accent-line"></div>
+  <h3>Présentée par</h3>
+  <p style="font-size:1.25rem;color:#fff;font-weight:700;margin:2px 0">Chaima Hizaoui</p>
+  <p style="font-size:1.25rem;color:#fff;font-weight:700;margin:2px 0">Raja Bougossa</p>
+  <p class="small" style="margin-top:35px">Année universitaire 2026–2027</p>
+ </div>
+</section>
+
+<section class="slide">
+ <div class="kicker">01 · Introduction</div><h2>Plan de la présentation</h2>
+ <div class="grid">
+  <article class="card"><h3>Comprendre GraphQL</h3><p>Définition, origine, objectifs et problèmes rencontrés avec les API classiques.</p></article>
+  <article class="card"><h3>Découvrir son fonctionnement</h3><p>Architecture, schéma, types, resolvers et cycle d’une requête.</p></article>
+  <article class="card"><h3>Apprendre les opérations</h3><p>Query, Mutation et Subscription avec des exemples concrets.</p></article>
+  <article class="card"><h3>Évaluer la technologie</h3><p>Comparaison avec REST, avantages, limites, sécurité et outils.</p></article>
+ </div>
+ <p style="margin-top:25px">À la fin, nous saurons dans quels cas GraphQL est un bon choix pour construire une API.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">02 · Contexte</div><h2>Comment une application échange-t-elle avec un serveur ?</h2>
+ <p>Une application frontend (site web ou application mobile) a souvent besoin de données stockées sur un serveur : profils, produits, commandes, messages, etc.</p>
+ <div class="flow">
+  <div class="node">Application<br><span class="small">Frontend</span></div><div class="arrow">⇄</div>
+  <div class="node">API<br><span class="small">Point de communication</span></div><div class="arrow">⇄</div>
+  <div class="node">Serveur + base<br><span class="small">Backend</span></div>
+ </div>
+ <p>L’API reçoit les demandes du client, interroge les sources de données et renvoie une réponse. REST est une approche très utilisée pour construire ces API. GraphQL propose une autre façon de formuler les demandes.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">03 · Le problème</div><h2>Les limites fréquemment rencontrées avec REST</h2>
+ <div class="grid">
+  <article class="card"><span class="pill">Over-fetching</span><h3 style="margin-top:12px">Trop de données</h3><p>Le client demande les informations d’un utilisateur, mais l’endpoint renvoie aussi son adresse, sa date de naissance et d’autres champs inutiles à l’écran.</p><p><b>Conséquence :</b> transfert de données superflu.</p></article>
+  <article class="card"><span class="pill">Under-fetching</span><h3 style="margin-top:12px">Pas assez de données</h3><p>Pour afficher un profil avec ses publications, le client doit appeler un endpoint pour le profil, puis un autre pour les publications.</p><p><b>Conséquence :</b> plusieurs appels et une logique frontend plus complexe.</p></article>
+ </div>
+ <p style="margin-top:22px">Ces situations ne signifient pas que REST est mauvais. Elles montrent simplement que certains écrans ont besoin d’une récupération de données plus flexible.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">04 · Définition</div><h2>Qu’est-ce que GraphQL ?</h2>
+ <p class="lead"><b>GraphQL</b> est un langage de requête pour les API et un environnement d’exécution côté serveur. Il permet au client de décrire précisément les données qu’il souhaite obtenir.</p>
+ <div class="grid three">
+  <article class="card"><h3>Langage de requête</h3><p>Le client écrit une requête structurée pour exprimer son besoin.</p></article>
+  <article class="card"><h3>Schéma typé</h3><p>Le serveur décrit les types, champs et opérations disponibles.</p></article>
+  <article class="card"><h3>Exécution serveur</h3><p>Le serveur exécute la requête et construit une réponse conforme à sa structure.</p></article>
+ </div>
+ <p style="margin-top:22px">GraphQL a été développé chez Facebook à partir de 2012 et rendu open source en 2015. Il peut être utilisé avec différentes bases de données et différents langages de programmation.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">05 · Exemple simple</div><h2>Le client choisit les champs souhaités</h2>
+ <p>Imaginons une application qui affiche une petite fiche utilisateur. Elle a uniquement besoin du nom et de l’adresse e-mail.</p>
+ <div class="grid">
+  <div><h3>Requête GraphQL</h3><pre class="code">query {
+  user(id: 7) {
+    name
+    email
+  }
+}</pre><p class="small">Le client demande les champs <b>name</b> et <b>email</b>.</p></div>
+  <div><h3>Réponse JSON</h3><pre class="code">{
+  "data": {
+    "user": {
+      "name": "Ahmed",
+      "email": "ahmed@example.com"
+    }
+  }
+}</pre><p class="small">La réponse reprend la structure demandée.</p></div>
+ </div>
+ <p><span class="pill">Important</span> GraphQL ne choisit pas automatiquement les données : le client les sélectionne parmi les champs autorisés par le schéma du serveur.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">06 · Architecture</div><h2>Les composants d’une architecture GraphQL</h2>
+ <div class="flow">
+  <div class="node">Client</div><div class="arrow">→</div><div class="node">Serveur GraphQL</div><div class="arrow">→</div><div class="node">Resolvers</div><div class="arrow">→</div><div class="node">Sources de données</div>
+ </div>
+ <div class="grid">
+  <article class="card"><h3>1. Client</h3><p>Application web ou mobile qui envoie une requête GraphQL.</p></article>
+  <article class="card"><h3>2. Serveur GraphQL</h3><p>Reçoit la requête, vérifie sa syntaxe et la valide par rapport au schéma.</p></article>
+  <article class="card"><h3>3. Resolvers</h3><p>Fonctions chargées de fournir la valeur de chaque champ demandé.</p></article>
+  <article class="card"><h3>4. Sources de données</h3><p>Base SQL, base NoSQL, API externe ou autre service métier.</p></article>
+ </div>
+</section>
+
+<section class="slide">
+ <div class="kicker">07 · Schéma</div><h2>Le Schema : le contrat de l’API</h2>
+ <p>Le schéma définit ce que le client a le droit de demander. Il décrit les objets, leurs champs et les opérations disponibles. Il sert de contrat entre le frontend et le backend.</p>
+ <pre class="code">type User {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type Query {
+  user(id: ID!): User
+}</pre>
+ <ul>
+  <li><b>type User :</b> décrit un objet utilisateur.</li>
+  <li><b>String :</b> représente une chaîne de caractères.</li>
+  <li><b>ID :</b> représente un identifiant.</li>
+  <li><b>! :</b> indique que la valeur ne peut pas être nulle.</li>
+  <li><b>type Query :</b> définit les opérations de lecture disponibles.</li>
+ </ul>
+</section>
+
+<section class="slide">
+ <div class="kicker">08 · Resolvers</div><h2>Le rôle des resolvers</h2>
+ <p>Le schéma annonce les champs disponibles, mais il ne contient pas à lui seul la logique pour récupérer les informations. Les resolvers réalisent ce travail.</p>
+ <pre class="code">const resolvers = {
+  Query: {
+    user: async (_, args, context) => {
+      return context.db.users.findById(args.id);
+    }
+  }
+};</pre>
+ <div class="grid">
+  <article class="card"><h3>Le schéma</h3><p>Déclare qu’une requête <b>user</b> existe et retourne un utilisateur.</p></article>
+  <article class="card"><h3>Le resolver</h3><p>Explique comment trouver cet utilisateur, par exemple en interrogeant la base de données.</p></article>
+ </div>
+ <p class="small">Exemple illustratif en JavaScript : l’implémentation exacte dépend du serveur et de la bibliothèque utilisés.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">09 · Cycle d’exécution</div><h2>Que se passe-t-il lorsqu’une requête arrive ?</h2>
+ <ol>
+  <li><b>Envoi :</b> le client envoie une requête au serveur GraphQL.</li>
+  <li><b>Analyse :</b> le serveur vérifie que la requête est correctement écrite.</li>
+  <li><b>Validation :</b> les champs demandés doivent exister dans le schéma et respecter les types.</li>
+  <li><b>Exécution :</b> les resolvers sont appelés pour obtenir les valeurs.</li>
+  <li><b>Réponse :</b> le serveur renvoie généralement un objet JSON contenant les données et éventuellement des erreurs.</li>
+ </ol>
+ <div class="flow"><div class="node">Requête</div><div class="arrow">→</div><div class="node">Analyse</div><div class="arrow">→</div><div class="node">Validation</div><div class="arrow">→</div><div class="node">Resolvers</div><div class="arrow">→</div><div class="node">JSON</div></div>
+</section>
+
+<section class="slide">
+ <div class="kicker">10 · Query</div><h2>Query : lire des informations</h2>
+ <p>Une Query permet de récupérer des données sans demander au serveur de les modifier. Elle ressemble à une opération de lecture.</p>
+ <pre class="code">query {
+  user(id: 7) {
+    name
+    email
+  }
+}</pre>
+ <p>On peut aussi demander plusieurs informations liées, si le schéma les autorise :</p>
+ <pre class="code">query {
+  user(id: 7) {
+    name
+    posts {
+      title
+    }
+  }
+}</pre>
+ <p>Cette requête demande le nom de l’utilisateur et les titres de ses publications. Les champs disponibles dépendent toujours du schéma.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">11 · Mutation</div><h2>Mutation : modifier les données</h2>
+ <p>Une Mutation sert à effectuer une action qui modifie l’état des données : création, mise à jour ou suppression.</p>
+ <pre class="code">mutation {
+  createUser(name: "Raja", email: "raja@example.com") {
+    id
+    name
+    email
+  }
+}</pre>
+ <div class="grid">
+  <article class="card"><h3>Création</h3><p>Ajouter un nouvel utilisateur ou un nouveau produit.</p></article>
+  <article class="card"><h3>Mise à jour</h3><p>Modifier le nom, l’adresse ou le statut d’un élément.</p></article>
+  <article class="card"><h3>Suppression</h3><p>Supprimer une ressource selon les droits de l’utilisateur.</p></article>
+  <article class="card"><h3>Retour</h3><p>La mutation peut renvoyer les champs utiles après l’opération.</p></article>
+ </div>
+</section>
+
+<section class="slide">
+ <div class="kicker">12 · Subscription</div><h2>Subscription : recevoir les mises à jour en temps réel</h2>
+ <p>Une Subscription permet à un client de rester abonné à un événement. Lorsque cet événement se produit, le serveur peut transmettre une nouvelle information au client.</p>
+ <pre class="code">subscription {
+  messageAdded {
+    id
+    content
+    author
+  }
+}</pre>
+ <p><b>Exemple concret :</b> dans une application de discussion, lorsqu’un utilisateur envoie un message, les autres participants peuvent le recevoir sans actualiser la page.</p>
+ <p class="small">Les subscriptions sont généralement mises en œuvre avec une connexion persistante, par exemple WebSocket, selon la configuration du serveur.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">13 · Comparaison</div><h2>GraphQL et REST : quelles différences ?</h2>
+ <table>
+  <thead><tr><th>Critère</th><th>REST</th><th>GraphQL</th></tr></thead>
+  <tbody>
+   <tr><td>Organisation</td><td>Ressources et endpoints</td><td>Schéma et opérations</td></tr>
+   <tr><td>Choix des champs</td><td>Réponse définie par endpoint</td><td>Champs choisis par le client</td></tr>
+   <tr><td>Récupération liée</td><td>Plusieurs appels parfois nécessaires</td><td>Peut regrouper plusieurs champs liés</td></tr>
+   <tr><td>Cache HTTP</td><td>Souvent plus direct</td><td>Demande une stratégie adaptée</td></tr>
+   <tr><td>Temps réel</td><td>WebSocket / SSE ou autre</td><td>Subscriptions possibles</td></tr>
+  </tbody>
+ </table>
+ <p>Les deux approches sont valables. Le choix dépend de la nature de l’application, des compétences de l’équipe et des contraintes techniques.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">14 · Avantages</div><h2>Pourquoi choisir GraphQL ?</h2>
+ <div class="grid">
+  <article class="card"><h3>Requêtes précises</h3><p>Le client demande uniquement les champs dont son interface a besoin.</p></article>
+  <article class="card"><h3>Moins d’allers-retours</h3><p>Des données liées peuvent être obtenues dans une seule opération.</p></article>
+  <article class="card"><h3>Schéma documenté</h3><p>Le schéma décrit les capacités de l’API et facilite la découverte des champs.</p></article>
+  <article class="card"><h3>Évolution contrôlée</h3><p>De nouveaux champs peuvent être ajoutés sans nécessairement créer une nouvelle version d’endpoint.</p></article>
+ </div>
+</section>
+
+<section class="slide">
+ <div class="kicker">15 · Limites</div><h2>Les inconvénients et difficultés</h2>
+ <ul>
+  <li><b>Complexité initiale :</b> il faut concevoir le schéma, les resolvers et les règles d’accès.</li>
+  <li><b>Cache :</b> les réponses GraphQL utilisent souvent POST et nécessitent une stratégie de cache adaptée.</li>
+  <li><b>Requêtes coûteuses :</b> une requête imbriquée peut demander beaucoup de ressources au serveur.</li>
+  <li><b>Problème N+1 :</b> certains resolvers peuvent déclencher trop de requêtes vers la base de données. Des outils comme DataLoader aident à regrouper ces accès.</li>
+  <li><b>Sécurité :</b> il faut contrôler les autorisations, la profondeur et le coût des requêtes.</li>
+ </ul>
+ <p>GraphQL apporte de la flexibilité, mais cette flexibilité doit être encadrée par une bonne conception.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">16 · Sécurité et bonnes pratiques</div><h2>Comment sécuriser une API GraphQL ?</h2>
+ <div class="grid">
+  <article class="card"><h3>Authentification</h3><p>Identifier l’utilisateur, par exemple avec une session ou un jeton.</p></article>
+  <article class="card"><h3>Autorisation</h3><p>Vérifier qu’il a le droit d’accéder à chaque ressource ou action.</p></article>
+  <article class="card"><h3>Limitation des requêtes</h3><p>Contrôler la profondeur, le coût et la taille des requêtes.</p></article>
+  <article class="card"><h3>Validation des entrées</h3><p>Vérifier les paramètres et éviter d’exposer des informations sensibles.</p></article>
+ </div>
+ <p>Il ne faut jamais considérer qu’un champ est accessible simplement parce qu’il existe dans le schéma : les permissions doivent être vérifiées côté serveur.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">17 · Écosystème</div><h2>Outils et technologies compatibles</h2>
+ <p>GraphQL n’impose pas un langage de programmation ni une base de données spécifique.</p>
+ <div class="grid three">
+  <article class="card"><h3>Serveur</h3><p>Apollo Server, GraphQL Yoga, Spring for GraphQL.</p></article>
+  <article class="card"><h3>Client</h3><p>Apollo Client, Relay, urql.</p></article>
+  <article class="card"><h3>Langages</h3><p>JavaScript, TypeScript, Java, Python, PHP et autres.</p></article>
+  <article class="card"><h3>Bases SQL</h3><p>PostgreSQL, MySQL, SQL Server.</p></article>
+  <article class="card"><h3>Bases NoSQL</h3><p>MongoDB et autres systèmes compatibles.</p></article>
+  <article class="card"><h3>Exploration</h3><p>GraphiQL et Apollo Sandbox pour tester les requêtes.</p></article>
+ </div>
+</section>
+
+<section class="slide">
+ <div class="kicker">18 · Cas d’utilisation</div><h2>Quand utiliser GraphQL ?</h2>
+ <div class="grid">
+  <article class="card"><h3>Application mobile</h3><p>Limiter les données transférées sur une connexion parfois lente.</p></article>
+  <article class="card"><h3>Tableau de bord</h3><p>Assembler des informations provenant de plusieurs ressources.</p></article>
+  <article class="card"><h3>Application sociale</h3><p>Afficher des profils, publications, commentaires et réactions.</p></article>
+  <article class="card"><h3>Écosystème de services</h3><p>Fournir une interface de données unifiée au frontend.</p></article>
+ </div>
+ <p style="margin-top:20px">Pour une API simple avec des ressources CRUD classiques, REST peut rester plus facile à mettre en place et à maintenir.</p>
+</section>
+
+<section class="slide">
+ <div class="kicker">19 · Conclusion</div><h2>Ce qu’il faut retenir</h2>
+ <p class="lead">GraphQL est une technologie conçue pour rendre les échanges entre le client et le serveur plus flexibles.</p>
+ <div class="grid three">
+  <article class="card"><h3>Query</h3><p>Lire les données.</p></article>
+  <article class="card"><h3>Mutation</h3><p>Modifier les données.</p></article>
+  <article class="card"><h3>Subscription</h3><p>Recevoir des événements.</p></article>
+ </div>
+ <p>Son schéma typé, ses resolvers et ses requêtes personnalisées sont ses éléments fondamentaux. Il ne remplace pas REST dans tous les cas, mais constitue une alternative intéressante lorsque les besoins de récupération de données sont complexes.</p>
+ <h1 class="gradient" style="font-size:clamp(3rem,7vw,5.5rem);margin-top:32px">Merci !</h1>
+ <h3>Des questions ?</h3>
+ <p class="small">Présentation réalisée par Chaima Hizaoui et Raja Bougossa.</p>
+</section>
+</main>
+<nav class="footer">
+ <button id="prev" onclick="move(-1)">← Précédent</button><span id="counter">1 / 19</span><button id="next" onclick="move(1)">Suivant →</button><button onclick="window.print()">⎙ Imprimer / PDF</button>
+</nav>
+<script>
+const slides=[...document.querySelectorAll('.slide')].filter(s=>s.innerHTML.trim());let index=0;
+function show(n){index=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,i)=>s.classList.toggle('active',i===index));document.getElementById('counter').textContent=(index+1)+' / '+slides.length;document.getElementById('prev').disabled=index===0;document.getElementById('next').disabled=index===slides.length-1;document.getElementById('progress').style.width=((index+1)/slides.length*100)+'%'}
+function move(d){show(index+d)}
+document.addEventListener('keydown',e=>{if(['ArrowRight',' '].includes(e.key)){e.preventDefault();move(1)}else if(e.key==='ArrowLeft')move(-1);else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1)});
+let start=null;document.addEventListener('touchstart',e=>start=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{if(start===null)return;const dx=e.changedTouches[0].screenX-start;if(Math.abs(dx)>55)move(dx<0?1:-1);start=null},{passive:true});show(0);
+</script>
+</body></html>
